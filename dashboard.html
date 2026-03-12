@@ -2,17 +2,27 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>FocusForge Dashboard</title>
+
 <link rel="stylesheet" href="css/style.css">
+
+<script>
+if(localStorage.getItem("theme")==="dark"){
+document.documentElement.classList.add("dark");
+}
+</script>
+
 </head>
 
 <body>
 
 <div class="dashboard">
 
-<!-- Sidebar -->
+<!-- SIDEBAR -->
 
 <aside class="sidebar">
 
@@ -20,23 +30,31 @@
 
 <ul class="menu">
 
+<ul class="menu">
+
 <li><a href="dashboard.html">Dashboard</a></li>
 <li><a href="timer.html">Focus Timer</a></li>
 <li><a href="stats.html">Statistics</a></li>
-<li><a href="#">Settings</a></li>
+<li><a href="learn.html">Learn</a></li>
+<li><a href="settings.html">Settings</a></li>
 
+</ul>
 </ul>
 
 </aside>
 
 
-<!-- Main Content -->
+
+<!-- MAIN CONTENT -->
 
 <main class="main">
 
 <h1>Welcome Back</h1>
 <p>Ready to forge your focus today?</p>
 
+
+
+<!-- STATS -->
 
 <div class="cards">
 
@@ -58,6 +76,13 @@
 </div>
 
 
+
+<!-- GRID SECTION -->
+
+<div class="dashboard-grid">
+
+<!-- START SESSION -->
+
 <div class="focus-box">
 
 <h2>Start a Focus Session</h2>
@@ -68,9 +93,136 @@
 
 </div>
 
+
+
+<!-- TODO LIST -->
+
+<div class="card todo-card">
+
+<h2>Today's Tasks</h2>
+
+<div class="todo-input">
+
+<input
+type="text"
+id="taskInput"
+placeholder="Add a task..."
+>
+
+<button class="btn" id="addTaskBtn">Add</button>
+
+</div>
+
+<ul id="taskList"></ul>
+
+</div>
+
+
+</div>
+
+
 </main>
 
 </div>
+
+
+
+<script>
+
+/* ELEMENTS */
+
+const input = document.getElementById("taskInput");
+const addBtn = document.getElementById("addTaskBtn");
+const taskList = document.getElementById("taskList");
+
+/* LOAD TASKS */
+
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+/* SAVE */
+
+function saveTasks(){
+localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+/* RENDER TASKS */
+
+function renderTasks(){
+
+taskList.innerHTML = "";
+
+tasks.forEach((task,index)=>{
+
+const li = document.createElement("li");
+
+li.className = "task" + (task.completed ? " completed" : "");
+
+li.innerHTML = `
+
+<div class="task-left">
+
+<div class="task-circle"></div>
+
+<span>${task.text}</span>
+
+</div>
+
+<button class="delete-btn">✕</button>
+
+`;
+
+li.querySelector(".task-left").addEventListener("click",()=>{
+
+tasks[index].completed = !tasks[index].completed;
+
+saveTasks();
+renderTasks();
+
+});
+
+li.querySelector(".delete-btn").addEventListener("click",(e)=>{
+
+e.stopPropagation();
+
+tasks.splice(index,1);
+
+saveTasks();
+renderTasks();
+
+});
+
+taskList.appendChild(li);
+
+});
+
+}
+
+/* ADD TASK */
+
+addBtn.addEventListener("click",()=>{
+
+const text = input.value.trim();
+
+if(text === "") return;
+
+tasks.push({
+text:text,
+completed:false
+});
+
+input.value="";
+
+saveTasks();
+renderTasks();
+
+});
+
+/* INITIAL RENDER */
+
+renderTasks();
+
+</script>
+
 
 </body>
 </html>

@@ -10,9 +10,13 @@
 
 <link rel="stylesheet" href="css/style.css">
 
-<style>
+<script>
+if(localStorage.getItem("theme")==="dark"){
+document.documentElement.classList.add("dark");
+}
+</script>
 
-/* Focus Mode */
+<style>
 
 .focus-mode .sidebar{
 display:none;
@@ -41,7 +45,6 @@ margin-top:120px;
 
 <div class="dashboard" id="dashboard">
 
-
 <!-- SIDEBAR -->
 
 <aside class="sidebar">
@@ -50,10 +53,15 @@ margin-top:120px;
 
 <ul class="menu">
 
+<ul class="menu">
+
 <li><a href="dashboard.html">Dashboard</a></li>
 <li><a href="timer.html">Focus Timer</a></li>
 <li><a href="stats.html">Statistics</a></li>
-<li><a href="#">Settings</a></li>
+<li><a href="learn.html">Learn</a></li>
+<li><a href="settings.html">Settings</a></li>
+
+</ul>
 
 </ul>
 
@@ -71,25 +79,17 @@ margin-top:120px;
 
 <div class="timer-container">
 
-
 <!-- TIMER MODES -->
 
 <div class="timer-modes">
 
-<button class="mode-btn active" data-mode="pomodoro">
-Pomodoro
-</button>
+<button class="mode-btn active" data-mode="pomodoro">Pomodoro</button>
 
-<button class="mode-btn" data-mode="deep">
-45 / 15
-</button>
+<button class="mode-btn" data-mode="deep">45 / 15</button>
 
-<button class="mode-btn" data-mode="ultradian">
-Ultradian
-</button>
+<button class="mode-btn" data-mode="ultradian">Ultradian</button>
 
 </div>
-
 
 
 <!-- PHASE -->
@@ -99,30 +99,22 @@ Focus Session
 </div>
 
 
-
-<!-- TIMER -->
+<!-- TIMER DISPLAY -->
 
 <div class="timer-display" id="timerDisplay">
 25:00
 </div>
 
 
-
 <!-- BUTTONS -->
 
 <div class="timer-buttons">
 
-<button class="btn" id="startBtn">
-Start
-</button>
+<button class="btn" id="startBtn">Start</button>
 
-<button class="btn" id="pauseBtn">
-Pause
-</button>
+<button class="btn" id="pauseBtn">Pause</button>
 
-<button class="btn" id="resetBtn">
-Reset
-</button>
+<button class="btn" id="resetBtn">Reset</button>
 
 </div>
 
@@ -140,75 +132,77 @@ Reset
 
 const modes = {
 
-pomodoro: { focus:25, break:5 },
+pomodoro:{focus:25,break:5},
 
-deep: { focus:45, break:15 },
+deep:{focus:45,break:15},
 
-ultradian: { focus:90, break:20 }
+ultradian:{focus:90,break:20}
 
 };
 
 
-
 /* VARIABLES */
 
-let currentMode = "pomodoro";
-let phase = "focus";
-let timerInterval = null;
+let currentMode="pomodoro";
 
-let timeRemaining = modes[currentMode].focus * 60;
+let phase="focus";
 
+let timerInterval=null;
+
+let timeRemaining=modes[currentMode].focus*60;
+
+let paused=false;
 
 
 /* ELEMENTS */
 
-const dashboard = document.getElementById("dashboard");
+const dashboard=document.getElementById("dashboard");
 
-const timerDisplay = document.getElementById("timerDisplay");
+const timerDisplay=document.getElementById("timerDisplay");
 
-const phaseIndicator = document.getElementById("phase");
+const phaseIndicator=document.getElementById("phase");
 
-const modeButtons = document.querySelectorAll(".mode-btn");
+const startBtn=document.getElementById("startBtn");
 
-const startBtn = document.getElementById("startBtn");
+const pauseBtn=document.getElementById("pauseBtn");
 
-const pauseBtn = document.getElementById("pauseBtn");
+const resetBtn=document.getElementById("resetBtn");
 
-const resetBtn = document.getElementById("resetBtn");
+const modeButtons=document.querySelectorAll(".mode-btn");
 
 
-
-/* DISPLAY UPDATE */
+/* DISPLAY */
 
 function updateDisplay(){
 
-let minutes = Math.floor(timeRemaining / 60);
+let minutes=Math.floor(timeRemaining/60);
 
-let seconds = timeRemaining % 60;
+let seconds=timeRemaining%60;
 
-seconds = seconds < 10 ? "0" + seconds : seconds;
+seconds=seconds<10?"0"+seconds:seconds;
 
-timerDisplay.textContent = minutes + ":" + seconds;
+timerDisplay.textContent=minutes+":"+seconds;
 
 }
 
 
-
-/* START TIMER */
+/* START */
 
 function startTimer(){
 
 if(timerInterval) return;
 
+startBtn.disabled=true;
+
 dashboard.classList.add("focus-mode");
 
-timerInterval = setInterval(()=>{
+timerInterval=setInterval(()=>{
 
 timeRemaining--;
 
 updateDisplay();
 
-if(timeRemaining <= 0){
+if(timeRemaining<=0){
 
 switchPhase();
 
@@ -219,62 +213,114 @@ switchPhase();
 }
 
 
-
-/* PAUSE */
+/* PAUSE / RESUME */
 
 function pauseTimer(){
 
+if(!paused){
+
 clearInterval(timerInterval);
 
-timerInterval = null;
+timerInterval=null;
+
+pauseBtn.textContent="Resume";
+
+paused=true;
+
+}else{
+
+pauseBtn.textContent="Pause";
+
+paused=false;
+
+startTimer();
 
 }
 
+}
 
 
 /* RESET */
 
 function resetTimer(){
 
-pauseTimer();
+clearInterval(timerInterval);
+
+timerInterval=null;
+
+paused=false;
+
+pauseBtn.textContent="Pause";
+
+startBtn.disabled=false;
 
 dashboard.classList.remove("focus-mode");
 
-phase = "focus";
+phase="focus";
 
-phaseIndicator.textContent = "Focus Session";
+phaseIndicator.textContent="Focus Session";
 
-timeRemaining = modes[currentMode].focus * 60;
+timeRemaining=modes[currentMode].focus*60;
 
 updateDisplay();
 
 }
 
 
+/* SAVE SESSION FOR STATS */
+
+function saveSession(){
+
+let sessions=localStorage.getItem("sessions")||0;
+
+sessions++;
+
+localStorage.setItem("sessions",sessions);
+
+
+let focusToday=localStorage.getItem("focusToday")||0;
+
+focusToday=parseInt(focusToday)+modes[currentMode].focus;
+
+localStorage.setItem("focusToday",focusToday);
+
+
+let week=JSON.parse(localStorage.getItem("weekStats"))||[0,0,0,0,0,0,0];
+
+let day=new Date().getDay();
+
+week[day]+=modes[currentMode].focus;
+
+localStorage.setItem("weekStats",JSON.stringify(week));
+
+}
+
 
 /* SWITCH PHASE */
 
 function switchPhase(){
 
-pauseTimer();
+clearInterval(timerInterval);
 
-if(phase === "focus"){
+timerInterval=null;
 
-phase = "break";
+if(phase==="focus"){
 
-phaseIndicator.textContent = "Break Time";
+saveSession();
 
-timeRemaining = modes[currentMode].break * 60;
+phase="break";
 
-}
+phaseIndicator.textContent="Break Time";
 
-else{
+timeRemaining=modes[currentMode].break*60;
 
-phase = "focus";
+}else{
 
-phaseIndicator.textContent = "Focus Session";
+phase="focus";
 
-timeRemaining = modes[currentMode].focus * 60;
+phaseIndicator.textContent="Focus Session";
+
+timeRemaining=modes[currentMode].focus*60;
 
 }
 
@@ -283,7 +329,6 @@ updateDisplay();
 startTimer();
 
 }
-
 
 
 /* MODE SWITCH */
@@ -296,14 +341,13 @@ modeButtons.forEach(b=>b.classList.remove("active"));
 
 button.classList.add("active");
 
-currentMode = button.dataset.mode;
+currentMode=button.dataset.mode;
 
 resetTimer();
 
 });
 
 });
-
 
 
 /* BUTTON EVENTS */
@@ -315,13 +359,11 @@ pauseBtn.addEventListener("click",pauseTimer);
 resetBtn.addEventListener("click",resetTimer);
 
 
-
 /* INITIAL DISPLAY */
 
 updateDisplay();
 
 </script>
-
 
 </body>
 </html>
