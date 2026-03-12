@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Leaderboard | FlowFocus</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<script>
+if(localStorage.getItem("theme")==="dark"){
+document.documentElement.classList.add("dark");
+}
+</script>
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+<aside class="sidebar">
+
+<h2 class="logo">FlowFocus</h2>
+
+<ul class="menu">
+
+<li><a href="dashboard.html">Dashboard</a></li>
+<li><a href="timer.html">Focus Timer</a></li>
+<li><a href="stats.html">Statistics</a></li>
+<li><a href="leaderboard.html" class="active">Leaderboard</a></li>
+<li><a href="learn.html">Learn</a></li>
+<li><a href="settings.html">Settings</a></li>
+
+</ul>
+
+</aside>
+
+
+<main class="main">
+
+<h1>Leaderboard</h1>
+
+<div class="card">
+
+<ul id="leaderboardList"></ul>
+
+</div>
+
+</main>
+
+</div>
+
+
+<script>
+
+fetch("http://localhost:3000/leaderboard")
+
+.then(res=>res.json())
+
+.then(users=>{
+
+const list = document.getElementById("leaderboardList")
+
+users.forEach((user,index)=>{
+
+const li = document.createElement("li")
+
+li.innerHTML = `
+
+<strong>#${index+1}</strong>
+${user.email}
+<span style="float:right">${user.xp} XP</span>
+
+`
+
+li.style.padding="12px 0"
+
+list.appendChild(li)
+
+})
+
+})
+
+</script>
+
+</body>
+</html>

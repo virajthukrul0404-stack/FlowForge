@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Statistics | FlowFocus</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<script>
+if(localStorage.getItem("theme")==="dark"){
+document.documentElement.classList.add("dark");
+}
+</script>
+
+<style>
+
+.chart{
+margin-top:40px;
+}
+
+.bar-row{
+display:flex;
+align-items:center;
+margin:10px 0;
+}
+
+.day{
+width:60px;
+}
+
+.bar{
+height:20px;
+background:#3b82f6;
+border-radius:6px;
+margin-left:10px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="dashboard">
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+<h2 class="logo">FlowFocus</h2>
+
+<ul class="menu">
+
+<li><a href="dashboard.html">Dashboard</a></li>
+<li><a href="timer.html">Focus Timer</a></li>
+<li><a href="stats.html" class="active">Statistics</a></li>
+<li><a href="leaderboard.html">Leaderboard</a></li>
+<li><a href="learn.html">Learn</a></li>
+<li><a href="settings.html">Settings</a></li>
+
+</ul>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+<h1>Statistics</h1>
+
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Focus Time</h3>
+<p class="stat" id="todayTime">0 min</p>
+</div>
+
+<div class="card">
+<h3>Sessions Completed</h3>
+<p class="stat" id="sessionsCompleted">0</p>
+</div>
+
+</div>
+
+
+<h2 style="margin-top:40px;">Weekly Focus</h2>
+
+<div class="chart" id="chart"></div>
+
+</main>
+
+</div>
+
+
+
+<script>
+
+/* ============================= */
+/* GET USER ID */
+/* ============================= */
+
+const user_id = localStorage.getItem("user_id")
+
+if(!user_id){
+window.location.href = "login.html"
+}
+
+
+/* ============================= */
+/* FETCH USER STATS */
+/* ============================= */
+
+fetch(`http://localhost:3000/stats/${user_id}`)
+
+.then(res => res.json())
+
+.then(data => {
+
+const focusMinutes = data.focus_minutes || 0
+
+document.getElementById("todayTime").textContent =
+focusMinutes + " min"
+
+document.getElementById("sessionsCompleted").textContent =
+Math.floor(focusMinutes / 25)
+
+})
+
+
+/* ============================= */
+/* WEEKLY CHART FROM DATABASE */
+/* ============================= */
+
+const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+
+const chart = document.getElementById("chart")
+
+fetch(`http://localhost:3000/weekly-stats/${user_id}`)
+
+.then(res=>res.json())
+
+.then(data=>{
+
+/* create array for 7 days */
+
+let week = [0,0,0,0,0,0,0]
+
+data.forEach(row=>{
+
+week[row.day] = row.minutes
+
+})
+
+week.forEach((minutes,i)=>{
+
+let row = document.createElement("div")
+row.className = "bar-row"
+
+let label = document.createElement("div")
+label.className = "day"
+label.textContent = days[i]
+
+let bar = document.createElement("div")
+bar.className = "bar"
+
+bar.style.width = (minutes * 4) + "px"
+
+row.appendChild(label)
+row.appendChild(bar)
+
+chart.appendChild(row)
+
+})
+
+})
+
+</script>
+
+</body>
+</html>
