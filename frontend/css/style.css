@@ -1,0 +1,486 @@
+/* ===================== */
+/* GLOBAL RESET */
+/* ===================== */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Inter, system-ui, Arial, sans-serif;
+}
+
+
+/* ===================== */
+/* COLOR VARIABLES */
+/* ===================== */
+
+:root{
+
+--bg-main:#f7f7f5;
+--sidebar:#ffffff;
+--card:#ffffff;
+
+--text-main:#1f1f1f;
+--text-muted:#6b6b6b;
+
+--accent:#3b82f6;
+
+--border:#e5e5e5;
+
+}
+
+
+/* ===================== */
+/* DARK MODE */
+/* ===================== */
+
+.dark{
+
+--bg-main:#0f172a;
+--sidebar:#020617;
+--card:#020617;
+
+--text-main:#ffffff;
+--text-muted:#94a3b8;
+
+--accent:#3b82f6;
+
+--border:#1e293b;
+
+}
+
+
+/* ===================== */
+/* BODY */
+/* ===================== */
+
+body{
+background:var(--bg-main);
+color:var(--text-main);
+line-height:1.6;
+transition:background 0.2s,color 0.2s;
+}
+
+
+/* ===================== */
+/* DASHBOARD LAYOUT */
+/* ===================== */
+
+.dashboard{
+display:flex;
+min-height:100vh;
+}
+
+
+/* ===================== */
+/* SIDEBAR */
+/* ===================== */
+
+.sidebar{
+
+width:230px;
+background:var(--sidebar);
+border-right:1px solid var(--border);
+
+padding:30px 20px;
+
+}
+
+.logo{
+font-size:22px;
+font-weight:600;
+margin-bottom:30px;
+}
+
+
+/* ===================== */
+/* MENU */
+/* ===================== */
+
+.menu{
+list-style:none;
+}
+
+.menu li{
+margin-bottom:10px;
+}
+
+.menu a{
+
+display:block;
+
+padding:10px 14px;
+
+border-radius:8px;
+
+text-decoration:none;
+
+color:var(--text-main);
+
+transition:0.2s;
+
+}
+
+.menu a:hover{
+background:rgba(0,0,0,0.05);
+}
+
+.dark .menu a:hover{
+background:rgba(255,255,255,0.08);
+}
+
+.menu a.active{
+background:rgba(59,130,246,0.15);
+}
+
+
+/* ===================== */
+/* MAIN */
+/* ===================== */
+
+.main{
+flex:1;
+padding:40px;
+max-width:1200px;
+}
+
+.main h1{
+font-size:30px;
+margin-bottom:5px;
+}
+
+.main p{
+color:var(--text-muted);
+}
+
+
+/* ===================== */
+/* CARDS GRID */
+/* ===================== */
+
+.cards{
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:25px;
+
+margin-top:30px;
+
+}
+
+
+/* ===================== */
+/* CARD */
+/* ===================== */
+
+.card{
+
+background:var(--card);
+
+padding:25px;
+
+border-radius:14px;
+
+border:1px solid var(--border);
+
+transition:0.2s;
+
+}
+
+.card:hover{
+transform:translateY(-2px);
+}
+
+
+/* ===================== */
+/* STATS */
+/* ===================== */
+
+.stat{
+font-size:26px;
+margin-top:10px;
+}
+
+
+/* ===================== */
+/* DASHBOARD GRID */
+/* ===================== */
+
+.dashboard-grid{
+
+display:grid;
+
+grid-template-columns:2fr 1fr;
+
+gap:25px;
+
+margin-top:35px;
+
+}
+
+
+/* ===================== */
+/* FOCUS SESSION CARD */
+/* ===================== */
+
+.focus-box{
+
+background:var(--card);
+
+padding:35px;
+
+border-radius:14px;
+
+border:1px solid var(--border);
+
+}
+
+
+/* ===================== */
+/* BUTTON */
+/* ===================== */
+
+.btn{
+
+display:inline-block;
+
+padding:12px 22px;
+
+background:var(--accent);
+
+color:white;
+
+border-radius:8px;
+
+border:none;
+
+cursor:pointer;
+
+font-weight:500;
+
+text-decoration:none;
+
+transition:0.2s;
+
+margin-top:10px;
+
+}
+
+.btn:hover{
+opacity:0.9;
+}
+
+
+/* ===================== */
+/* TODO */
+/* ===================== */
+
+.todo-card{
+padding:25px;
+}
+
+.todo-input{
+
+display:flex;
+
+gap:10px;
+
+margin:15px 0;
+
+}
+
+.todo-input input{
+
+flex:1;
+
+padding:10px;
+
+border-radius:8px;
+
+border:1px solid var(--border);
+
+background:var(--card);
+
+color:var(--text-main);
+
+}
+
+#taskList{
+list-style:none;
+margin-top:10px;
+}
+
+.task{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:10px 0;
+
+}
+
+.task-left{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+cursor:pointer;
+
+}
+
+.task-circle{
+
+width:16px;
+height:16px;
+
+border:2px solid var(--accent);
+
+border-radius:50%;
+
+}
+
+.task.completed span{
+
+text-decoration:line-through;
+
+color:var(--text-muted);
+
+}
+
+.task.completed .task-circle{
+background:var(--accent);
+}
+
+.delete-btn{
+
+background:none;
+
+border:none;
+
+color:var(--text-muted);
+
+font-size:16px;
+
+cursor:pointer;
+
+}
+
+.delete-btn:hover{
+color:#ef4444;
+}
+
+/* ===================== */
+/* TIMER CONTAINER */
+/* ===================== */
+
+.timer-container{
+
+margin-top:40px;
+
+background:var(--card);
+
+padding:50px;
+
+border-radius:14px;
+
+border:1px solid var(--border);
+
+max-width:520px;
+
+text-align:center;
+
+}
+
+
+/* TIMER MODES */
+
+.timer-modes{
+
+display:flex;
+
+justify-content:center;
+
+gap:10px;
+
+margin:20px 0;
+
+}
+
+.mode-btn{
+
+padding:8px 14px;
+
+border-radius:8px;
+
+border:1px solid var(--border);
+
+background:var(--card);
+
+color:var(--text-main);
+
+cursor:pointer;
+
+font-weight:500;
+
+}
+
+.mode-btn.active{
+
+background:var(--accent);
+
+color:white;
+
+border:none;
+
+}
+
+
+/* PHASE LABEL */
+
+.phase-indicator{
+
+margin-top:10px;
+
+font-size:14px;
+
+color:var(--text-muted);
+
+}
+
+
+/* TIMER DISPLAY */
+
+.timer-display{
+
+font-size:80px;
+
+font-weight:700;
+
+letter-spacing:2px;
+
+margin:25px 0;
+
+}
+
+
+/* BUTTON ROW */
+
+.timer-buttons{
+
+display:flex;
+
+justify-content:center;
+
+gap:15px;
+
+margin-top:10px;
+
+}
